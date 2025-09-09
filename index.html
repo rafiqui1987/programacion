@@ -963,11 +963,26 @@
 
             // Wait one frame to allow layout to settle
             requestAnimationFrame(() => {
+                // Medir tamaño completo (incluye parte no visible por scroll)
+                const targetWidth = Math.max(exportContent.scrollWidth, exportContent.offsetWidth);
+                const targetHeight = Math.max(exportContent.scrollHeight, exportContent.offsetHeight);
+                const prevWidthStyle = exportContent.style.width;
+                const prevHeightStyle = exportContent.style.height;
+                // Asegurar que el contenedor adopte el ancho total durante la captura
+                exportContent.style.width = targetWidth + 'px';
+                exportContent.style.height = 'auto';
+
                 html2canvas(exportContent, {
                     scale: 2,
                     backgroundColor: '#fff',
                     useCORS: true,
                     allowTaint: true,
+                    width: targetWidth,
+                    height: targetHeight,
+                    windowWidth: targetWidth,
+                    windowHeight: targetHeight,
+                    scrollX: 0,
+                    scrollY: 0,
                     onclone: (doc) => {
                         const legendClone = doc.getElementById('exportLegend');
                         if (legendClone) legendClone.style.display = 'block';
@@ -988,6 +1003,8 @@
                     calendar.className = previousClass;
                     if (modal && previousModalDisplay !== null) modal.style.display = previousModalDisplay;
                     exportContent.style.transform = previousTransform || '';
+                    exportContent.style.width = prevWidthStyle || '';
+                    exportContent.style.height = prevHeightStyle || '';
                 });
             });
         }
