@@ -440,8 +440,20 @@
         }
 
         @media (max-width: 768px) {
+            /* Mantener forma y ancho del calendario con scroll horizontal */
+            .calendar-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            /* Fijar ancho mínimo por día y permitir desbordamiento horizontal */
+            #calendar.calendar {
+                grid-template-columns: repeat(7, 180px);
+                width: max-content;
+            }
+
             .calendar-day {
-                min-height: 80px;
+                min-height: 90px;
                 padding: 10px;
             }
 
@@ -449,8 +461,8 @@
                 font-size: 1em;
             }
 
-            .person-tag { font-size: 0.75em; padding: 4px 8px; }
-            .person-tag .person-name { max-width: 120px; }
+            .person-tag { font-size: 0.8em; padding: 4px 8px; }
+            .person-tag .person-name { max-width: 160px; }
             .role-badge { width: 18px; height: 18px; line-height: 18px; font-size: 11px; margin-right: 6px; }
 
             .modal-content {
