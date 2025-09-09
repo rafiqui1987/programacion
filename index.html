@@ -238,9 +238,7 @@
         }
 
         .person-tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            display: inline-block;
             background: #ffffff;
             color: #1f2a44;
             padding: 6px 10px;
@@ -251,6 +249,7 @@
             border: 1px solid rgba(0,0,0,0.08);
             box-shadow: 0 1px 2px rgba(0,0,0,0.06);
             max-width: 100%;
+            white-space: nowrap;
         }
 
         .person-tag .person-name {
@@ -259,20 +258,22 @@
             text-overflow: ellipsis;
             max-width: 180px;
             display: inline-block;
+            vertical-align: middle;
         }
 
         .role-badge {
             width: 20px;
             height: 20px;
             border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            display: inline-block;
+            text-align: center;
+            line-height: 20px;
             font-size: 12px;
             font-weight: 800;
             color: #ffffff;
             box-shadow: 0 1px 2px rgba(0,0,0,0.15);
-            flex: 0 0 auto;
+            vertical-align: middle;
+            margin-right: 8px;
         }
 
         .role-a { background: #4f46e5; }
@@ -448,9 +449,9 @@
                 font-size: 1em;
             }
 
-            .person-tag { font-size: 0.75em; padding: 4px 8px; gap: 6px; }
+            .person-tag { font-size: 0.75em; padding: 4px 8px; }
             .person-tag .person-name { max-width: 120px; }
-            .role-badge { width: 18px; height: 18px; font-size: 11px; }
+            .role-badge { width: 18px; height: 18px; line-height: 18px; font-size: 11px; margin-right: 6px; }
 
             .modal-content {
                 width: 95%;
@@ -900,7 +901,7 @@
             }
         }
 
-        function exportAsImage() {
+    function exportAsImage() {
             const exportContent = document.getElementById('export-content');
             const legend = document.getElementById('exportLegend');
             const calendar = document.getElementById('calendar');
@@ -922,6 +923,8 @@
             calendar.classList.remove('fade-in');
             const previousModalDisplay = modal ? modal.style.display : null;
             if (modal) modal.style.display = 'none';
+            const previousTransform = exportContent.style.transform;
+            exportContent.style.transform = 'none';
 
             // Wait one frame to allow layout to settle
             requestAnimationFrame(() => {
@@ -929,7 +932,11 @@
                     scale: 2,
                     backgroundColor: '#fff',
                     useCORS: true,
-                    allowTaint: true
+                    allowTaint: true,
+                    onclone: (doc) => {
+                        const legendClone = doc.getElementById('exportLegend');
+                        if (legendClone) legendClone.style.display = 'block';
+                    }
                 }).then(canvas => {
                     const image = canvas.toDataURL('image/png');
                     const link = document.createElement('a');
@@ -945,6 +952,7 @@
                     legend.style.display = 'none';
                     calendar.className = previousClass;
                     if (modal && previousModalDisplay !== null) modal.style.display = previousModalDisplay;
+                    exportContent.style.transform = previousTransform || '';
                 });
             });
         }
